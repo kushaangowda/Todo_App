@@ -10,8 +10,19 @@ import {
 import Header from "./components/Header";
 import TodoItem from "./components/TodoItem";
 import AddTodo from "./components/AddTodo";
+// import Sandbox from "./components/Sandbox";
 
 export default function App() {
+	const uuidv4 = () => {
+		return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (
+			c
+		) {
+			var r = (Math.random() * 16) | 0,
+				v = c == "x" ? r : (r & 0x3) | 0x8;
+			return v.toString(16);
+		});
+	};
+
 	const [todos, setTodos] = useState([
 		{ text: "buy coffee", key: "1" },
 		{ text: "create a react native app", key: "2" },
@@ -52,7 +63,7 @@ export default function App() {
 			setTodos([
 				{
 					text: text,
-					id: String(Number(todos.length) + 1),
+					key: uuidv4(),
 				},
 				...todos,
 			]);
@@ -67,6 +78,7 @@ export default function App() {
 	};
 
 	return (
+		// <Sandbox />
 		<TouchableWithoutFeedback onPress={dismissKeyboard}>
 			<View style={styles.container}>
 				{/* header */}
@@ -94,9 +106,11 @@ const styles = StyleSheet.create({
 		backgroundColor: "#fff",
 	},
 	content: {
+		flex: 1,
 		padding: 40,
 	},
 	list: {
+		flex: 1,
 		marginTop: 20,
 	},
 });
