@@ -1,6 +1,15 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, View, FlatList } from "react-native";
+import {
+	StyleSheet,
+	View,
+	FlatList,
+	Alert,
+	TouchableWithoutFeedback,
+	Keyboard,
+} from "react-native";
 import Header from "./components/Header";
+import TodoItem from "./components/TodoItem";
+import AddTodo from "./components/AddTodo";
 
 export default function App() {
 	const [todos, setTodos] = useState([
@@ -9,22 +18,73 @@ export default function App() {
 		{ text: "play a game", key: "3" },
 	]);
 
+	const createAlertAgain = () =>
+		Alert.alert(
+			"Warning",
+			"You have no CHOICE",
+			[{ text: "Understood", onPress: () => console.log("OK Pressed") }],
+			{ cancelable: false }
+		);
+
+	const createAlert = () =>
+		Alert.alert(
+			"Warning",
+			"Todos must be over 3 characters long",
+			[
+				{ text: "I Dont Care!!", onPress: () => createAlertAgain() },
+				{ text: "Understood", onPress: () => console.log("OK Pressed") },
+			],
+			{ cancelable: false }
+		);
+
+	const deleteItem = (id) => {
+		console.log("deleting ", id);
+		setTodos(
+			todos.filter((todo) => {
+				return todo.key != id;
+			})
+		);
+	};
+
+	const addTodo = (text) => {
+		console.log("Adding todo: ", text);
+		if (text.length > 3) {
+			setTodos([
+				{
+					text: text,
+					id: String(Number(todos.length) + 1),
+				},
+				...todos,
+			]);
+		} else {
+			createAlert();
+		}
+	};
+
+	const dismissKeyboard = () => {
+		Keyboard.dismiss();
+		console.log("Keyboard dismissed");
+	};
+
 	return (
-		<View style={styles.container}>
-			{/* header */}
-			<Header />
-			<View style={styles.content}>
-				{/* todo form */}
-				<View style={styles.list}>
-					<FlatList
-						data={todos}
-						renderItem={({ item }) => {
-							return <Text>{item.text}</Text>;
-						}}
-					/>
+		<TouchableWithoutFeedback onPress={dismissKeyboard}>
+			<View style={styles.container}>
+				{/* header */}
+				<Header />
+				<View style={styles.content}>
+					{/* todo form */}
+					<AddTodo addTodo={addTodo} />
+					<View style={styles.list}>
+						<FlatList
+							data={todos}
+							renderItem={({ item }) => {
+								return <TodoItem item={item} deleteItem={deleteItem} />;
+							}}
+						/>
+					</View>
 				</View>
 			</View>
-		</View>
+		</TouchableWithoutFeedback>
 	);
 }
 
